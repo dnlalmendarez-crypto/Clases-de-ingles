@@ -6,6 +6,9 @@ vocabulario con actividades de **listening**, **speaking** y **writing**, y
 usa la API de Claude (Anthropic) para corregir la escritura y dar
 retroalimentación de pronunciación adaptada al nivel de cada estudiante.
 
+Desplegada en **Vercel**: el frontend (Vite) y el backend (funciones
+serverless) viven en un solo proyecto.
+
 ## ¿Qué incluye?
 
 - **Diagnóstico inicial**: el estudiante indica su nombre y cuánto inglés
@@ -32,17 +35,19 @@ retroalimentación de pronunciación adaptada al nivel de cada estudiante.
 
 ## Tecnología
 
-- **Cliente**: React + TypeScript + Vite + Tailwind CSS. Usa la
+- **Frontend**: React + TypeScript + Vite + Tailwind CSS. Usa la
   [Web Speech API](https://developer.mozilla.org/docs/Web/API/Web_Speech_API)
   del navegador para texto-a-voz (escuchar) y voz-a-texto (hablar) — sin
   costo y sin necesitar credenciales de Google. Funciona mejor en
   **Chrome** (escritorio o Android).
-- **Servidor**: Node.js + Express, expone dos endpoints que llaman a la API
-  de Claude:
+- **Backend**: funciones serverless de Vercel (Node.js) en `client/api/`,
+  que llaman a la API de Claude:
   - `POST /api/correct` — corrige un ejercicio de escritura.
   - `POST /api/speak-feedback` — da un consejo de pronunciación.
+  - `GET /api/health` — healthcheck, indica si Claude está configurado.
 
-  La llave de API nunca se expone al navegador: solo vive en el servidor.
+  La llave de API nunca se expone al navegador: solo vive en el entorno de
+  las funciones serverless.
 
 > ¿Por qué no la API de reconocimiento de voz de Google Cloud? Para una
 > primera versión gratuita y sin fricción de configuración se usa la Web
@@ -51,38 +56,71 @@ retroalimentación de pronunciación adaptada al nivel de cada estudiante.
 > añadir Google Cloud Speech-to-Text como reemplazo del reconocimiento de
 > voz en `client/src/lib/speech.ts` sin cambiar el resto de la app.
 
+## Desplegar en Vercel
+
+El proyecto está pensado para desplegarse directo desde este repositorio de
+GitHub, con la **raíz del proyecto (Root Directory) configurada como
+`client`** (ahí vive el `package.json`, el frontend Vite y las funciones en
+`api/`).
+
+1. En [vercel.com](https://vercel.com), importa este repositorio de GitHub
+   (`Add New... -> Project`).
+2. En **Root Directory**, selecciona `client`. Vercel detecta Vite
+   automáticamente (build command `vite build`, output `dist`) y las
+   funciones dentro de `client/api/` sin configuración extra.
+3. En **Environment Variables**, agrega:
+   - `ANTHROPIC_API_KEY` — tu llave de [console.anthropic.com](https://console.anthropic.com/).
+     Sin esta variable la app sigue funcionando, pero usando el modo de
+     corrección local en vez de Claude.
+4. Deploy. Cada push a la rama de producción despliega automáticamente.
+
+Si ya tienes la [Vercel CLI](https://vercel.com/docs/cli) instalada, también
+puedes hacerlo desde la terminal:
+
+```bash
+cd client
+vercel link        # conecta esta carpeta con el proyecto de Vercel
+vercel env add ANTHROPIC_API_KEY
+vercel deploy       # preview
+vercel deploy --prod
+```
+
 ## Cómo correrlo localmente
 
 Requiere Node.js 18 o superior.
 
+**Opción A — solo frontend (más simple, sin llamadas a Claude):**
+
 ```bash
-# 1. Instalar dependencias (cliente + servidor)
 npm install
-
-# 2. (Opcional pero recomendado) configurar la llave de Claude
-cp server/.env.example server/.env
-# Edita server/.env y pega tu ANTHROPIC_API_KEY
-# (consíguela en https://console.anthropic.com/)
-
-# 3. Levantar cliente y servidor juntos
 npm run dev
 ```
 
-Esto abre el cliente en `http://localhost:5173` (con proxy automático hacia
-el servidor en `http://localhost:8787`).
+Abre `http://localhost:5173`. Las llamadas a `/api/*` no responderán (no hay
+servidor local para ellas), así que la app usa automáticamente su modo de
+corrección local — sigue siendo utilizable para probar todo el flujo.
 
-Para correr cada parte por separado:
+**Opción B — frontend + funciones serverless (recomendado para probar Claude):**
+
+Requiere la [Vercel CLI](https://vercel.com/docs/cli) (`npm i -g vercel`) y
+haber enlazado el proyecto (`vercel link`, una sola vez).
 
 ```bash
-npm run dev:server   # http://localhost:8787
-npm run dev:client   # http://localhost:5173
+cd client
+cp .env.example .env.local
+# Edita .env.local y pega tu ANTHROPIC_API_KEY
+vercel dev
 ```
+
+Esto corre el frontend y las funciones de `api/` juntos, tal como en
+producción.
 
 ## Estructura del proyecto
 
 ```
-client/    App de React (interfaz, actividades, contenido de las lecciones)
-server/    API de Express que llama a Claude para corregir y dar feedback
+client/
+  src/     App de React (interfaz, actividades, contenido de las lecciones)
+  api/     Funciones serverless de Vercel que llaman a Claude
 ```
 
 Contenido de las lecciones: `client/src/data/curriculum.ts`. Para agregar

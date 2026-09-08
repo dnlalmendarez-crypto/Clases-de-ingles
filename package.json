@@ -2,17 +2,13 @@
   "name": "clases-de-ingles",
   "private": true,
   "version": "1.0.0",
-  "description": "Aplicacion interactiva para aprender ingles desde cero, pensada para adultos hispanohablantes de El Salvador.",
+  "description": "Aplicacion interactiva para aprender ingles desde cero, pensada para adultos hispanohablantes de El Salvador. Desplegada en Vercel (frontend Vite + funciones serverless en client/api).",
   "workspaces": [
-    "client",
-    "server"
+    "client"
   ],
   "scripts": {
-    "dev": "npm run dev --workspace=server & npm run dev --workspace=client",
-    "dev:client": "npm run dev --workspace=client",
-    "dev:server": "npm run dev --workspace=server",
-    "build": "npm run build --workspace=client && npm run build --workspace=server",
-    "build:client": "npm run build --workspace=client",
-    "build:server": "npm run build --workspace=server"
+    "dev": "npm run dev --workspace=client",
+    "build": "npm run build --workspace=client",
+    "lint": "npm run lint --workspace=client"
   }
 }
