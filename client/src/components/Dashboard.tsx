@@ -1,11 +1,14 @@
 import { CURRICULUM } from "../data/curriculum";
 import type { ProgressState } from "../types";
+import BackupPanel from "./BackupPanel";
 
 interface Props {
   progress: ProgressState;
   isUnitUnlocked: (unitId: string) => boolean;
   onSelectUnit: (unitId: string) => void;
   onReset: () => void;
+  getBackupCode: () => string;
+  onImportProgress: (code: string) => boolean;
 }
 
 function Stars({ count }: { count: number }) {
@@ -17,12 +20,19 @@ function Stars({ count }: { count: number }) {
   );
 }
 
-export default function Dashboard({ progress, isUnitUnlocked, onSelectUnit, onReset }: Props) {
+export default function Dashboard({
+  progress,
+  isUnitUnlocked,
+  onSelectUnit,
+  onReset,
+  getBackupCode,
+  onImportProgress,
+}: Props) {
   return (
     <div className="min-h-screen px-4 py-8 max-w-2xl mx-auto">
       <header className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-extrabold text-brand-800">
+          <h1 className="text-2xl font-bold text-brand-800">
             ¡Hola, {progress.name || "estudiante"}! 👋
           </h1>
           <p className="text-brand-600 text-sm mt-1">Sigue tu camino para aprender inglés</p>
@@ -76,7 +86,9 @@ export default function Dashboard({ progress, isUnitUnlocked, onSelectUnit, onRe
         })}
       </div>
 
-      <div className="text-center mt-10">
+      <BackupPanel getBackupCode={getBackupCode} onImport={onImportProgress} />
+
+      <div className="text-center mt-6">
         <button onClick={onReset} className="text-xs text-gray-400 underline hover:text-gray-600">
           Reiniciar progreso
         </button>

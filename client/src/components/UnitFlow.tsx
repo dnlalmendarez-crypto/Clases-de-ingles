@@ -1,6 +1,8 @@
 import { useState } from "react";
 import type { ActivityKind, Unit, UserLevel } from "../types";
 import Presentation from "./Presentation";
+import SlangActivity from "./SlangActivity";
+import DialogueActivity from "./DialogueActivity";
 import ListeningActivity from "./ListeningActivity";
 import SpeakingActivity from "./SpeakingActivity";
 import WritingActivity from "./WritingActivity";
@@ -23,7 +25,21 @@ export default function UnitFlow({ unit, level, onExit, onComplete }: Props) {
   };
 
   if (stage === "presentation") {
-    return <Presentation unit={unit} onExit={onExit} onDone={() => setStage("listening")} />;
+    return <Presentation unit={unit} onExit={onExit} onDone={() => setStage("slang")} />;
+  }
+
+  if (stage === "slang") {
+    return <SlangActivity unit={unit} onExit={onExit} onDone={() => setStage("dialogue")} />;
+  }
+
+  if (stage === "dialogue") {
+    return (
+      <DialogueActivity
+        unit={unit}
+        onExit={onExit}
+        onDone={(score) => addScoreAndAdvance(score, "listening")}
+      />
+    );
   }
 
   if (stage === "listening") {

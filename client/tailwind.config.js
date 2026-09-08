@@ -4,40 +4,43 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["'Nunito'", "system-ui", "sans-serif"],
+        sans: ["'Inter'", "system-ui", "sans-serif"],
       },
       colors: {
+        // Paleta principal: azul pizarra apagado, tono serio para un
+        // publico adulto (en vez del verde/menta tipo app infantil).
         brand: {
-          50: "#eefbf3",
-          100: "#d6f5e2",
-          200: "#aeebc9",
-          300: "#7bdaac",
-          400: "#46c28c",
-          500: "#22a672",
-          600: "#15855c",
-          700: "#136a4b",
-          800: "#12543e",
-          900: "#104634",
+          50: "#f2f6f8",
+          100: "#e1e9ee",
+          200: "#c2d3dc",
+          300: "#99b3c1",
+          400: "#6d8fa3",
+          500: "#4d7089",
+          600: "#3c5a6f",
+          700: "#304757",
+          800: "#283a47",
+          900: "#22303a",
         },
+        // Acento: dorado apagado, para XP/logros, sin ser estridente.
         sun: {
-          400: "#ffc857",
-          500: "#ffb703",
+          400: "#d1a54e",
+          500: "#b8892e",
         },
       },
       keyframes: {
         pop: {
-          "0%": { transform: "scale(0.9)", opacity: "0" },
-          "100%": { transform: "scale(1)", opacity: "1" },
+          "0%": { transform: "translateY(6px)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
         },
         shake: {
           "0%, 100%": { transform: "translateX(0)" },
-          "25%": { transform: "translateX(-6px)" },
-          "75%": { transform: "translateX(6px)" },
+          "25%": { transform: "translateX(-5px)" },
+          "75%": { transform: "translateX(5px)" },
         },
       },
       animation: {
-        pop: "pop 0.25s ease-out",
-        shake: "shake 0.3s ease-in-out",
+        pop: "pop 0.2s ease-out",
+        shake: "shake 0.25s ease-in-out",
       },
     },
   },

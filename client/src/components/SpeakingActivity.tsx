@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { Unit, UserLevel } from "../types";
 import { isSpeechRecognitionSupported, listenOnce, speak } from "../lib/speech";
 import { getSpeakFeedback } from "../lib/api";
@@ -14,8 +14,20 @@ interface Props {
 
 type Status = "idle" | "listening" | "checking" | "done" | "error";
 
+function shuffle<T>(arr: T[]): T[] {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
 export default function SpeakingActivity({ unit, level, onExit, onDone }: Props) {
-  const items = unit.vocab;
+  const items = useMemo(() => {
+    const roundSize = Math.min(5, unit.vocab.length);
+    return shuffle(unit.vocab).slice(0, roundSize);
+  }, [unit]);
   const [index, setIndex] = useState(0);
   const [status, setStatus] = useState<Status>("idle");
   const [heard, setHeard] = useState("");
@@ -76,10 +88,10 @@ export default function SpeakingActivity({ unit, level, onExit, onDone }: Props)
       />
 
       <div className="max-w-xl mx-auto px-4">
-        <div className="bg-white rounded-3xl shadow-xl p-8 text-center">
+        <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
           <p className="text-gray-500 mb-2">Repite esta frase en voz alta</p>
           <div className="text-3xl mb-1">{item.emoji}</div>
-          <div className="text-2xl font-extrabold text-gray-800">{target}</div>
+          <div className="text-2xl font-bold text-gray-800">{target}</div>
           <div className="text-gray-400 text-sm mt-1">"{item.exampleEs}"</div>
 
           <button

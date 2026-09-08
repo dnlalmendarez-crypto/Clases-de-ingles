@@ -6,12 +6,19 @@ import Dashboard from "./components/Dashboard";
 import UnitFlow from "./components/UnitFlow";
 
 export default function App() {
-  const { state, completeOnboarding, recordUnitResult, resetProgress, isUnitUnlocked } =
-    useProgress();
+  const {
+    state,
+    completeOnboarding,
+    recordUnitResult,
+    resetProgress,
+    importProgress,
+    getBackupCode,
+    isUnitUnlocked,
+  } = useProgress();
   const [activeUnitId, setActiveUnitId] = useState<string | null>(null);
 
   if (!state.onboardingDone) {
-    return <Onboarding onFinish={completeOnboarding} />;
+    return <Onboarding onFinish={completeOnboarding} onImportProgress={importProgress} />;
   }
 
   const activeUnit = activeUnitId ? getUnit(activeUnitId) : undefined;
@@ -32,6 +39,8 @@ export default function App() {
       progress={state}
       isUnitUnlocked={isUnitUnlocked}
       onSelectUnit={setActiveUnitId}
+      getBackupCode={getBackupCode}
+      onImportProgress={importProgress}
       onReset={() => {
         if (window.confirm("¿Seguro que quieres reiniciar todo tu progreso?")) {
           resetProgress();

@@ -30,7 +30,12 @@ function loadState(): ProgressState {
 
 function saveState(state: ProgressState) {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    // Almacenamiento lleno o bloqueado (modo privado, etc.): la app sigue
+    // funcionando en memoria durante la sesión actual.
+  }
 }
 
 function todayStr(): string {
@@ -50,6 +55,25 @@ function bumpStreak(state: ProgressState): ProgressState {
     streak: wasYesterday ? state.streak + 1 : 1,
     lastActiveDate: today,
   };
+}
+
+/** Codifica el progreso en un texto corto que se puede copiar y pegar. */
+export function encodeProgress(state: ProgressState): string {
+  return btoa(unescape(encodeURIComponent(JSON.stringify(state))));
+}
+
+/** Decodifica un código de respaldo. Devuelve null si no es válido. */
+export function decodeProgress(code: string): ProgressState | null {
+  try {
+    const json = decodeURIComponent(escape(atob(code.trim())));
+    const parsed = JSON.parse(json);
+    if (!parsed || typeof parsed !== "object" || typeof parsed.units !== "object") {
+      return null;
+    }
+    return { ...defaultState(), ...parsed };
+  } catch {
+    return null;
+  }
 }
 
 export function useProgress() {
@@ -96,6 +120,16 @@ export function useProgress() {
     setState(defaultState());
   }, []);
 
+  /** Restaura el progreso desde un código de respaldo. Devuelve true si tuvo éxito. */
+  const importProgress = useCallback((code: string): boolean => {
+    const restored = decodeProgress(code);
+    if (!restored) return false;
+    setState(restored);
+    return true;
+  }, []);
+
+  const getBackupCode = useCallback(() => encodeProgress(state), [state]);
+
   const isUnitUnlocked = useCallback(
     (unitId: string) => {
       const index = CURRICULUM.findIndex((u) => u.id === unitId);
@@ -106,5 +140,14 @@ export function useProgress() {
     [state.units]
   );
 
-  return { state, completeOnboarding, setLevel, recordUnitResult, resetProgress, isUnitUnlocked };
+  return {
+    state,
+    completeOnboarding,
+    setLevel,
+    recordUnitResult,
+    resetProgress,
+    importProgress,
+    getBackupCode,
+    isUnitUnlocked,
+  };
 }

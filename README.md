@@ -16,18 +16,34 @@ serverless) viven en un solo proyecto.
 - **Mapa de unidades** estilo "camino de aprendizaje" (saludos, números,
   familia, comida, rutina diaria, trabajo), cada una desbloqueando la
   siguiente al completarse.
-- Por cada unidad, cuatro etapas:
+- Por cada unidad, seis etapas:
   1. **Presentación**: tarjetas con emoji/imagen, palabra en inglés,
-     traducción y una frase de ejemplo, con botón de audio (🔊).
-  2. **Listening**: se reproduce la palabra en inglés y el estudiante elige
+     traducción y una frase de ejemplo, con audio (🔊). Las frases que lo
+     ameritan incluyen un botón "💡 ¿Por qué se dice así?" con una
+     explicación de uso/gramática en español.
+  2. **Slang y expresiones**: modismos y frases coloquiales reales (ej.
+     "It's on me", "Piece of cake"), con su significado, un ejemplo y una
+     nota de en qué contexto (formal/informal) es apropiado usarlas.
+  3. **Caso real / Diálogo**: una conversación corta y realista entre dos
+     personas en una situación cotidiana (pedir comida, pagar en una tienda,
+     pedir ayuda en el trabajo, etc.), en formato de chat con audio por
+     línea, seguida de una pregunta de comprensión.
+  4. **Listening**: se reproduce una palabra en inglés y el estudiante elige
      la traducción correcta entre 4 opciones.
-  3. **Speaking**: el estudiante repite una frase en voz alta; el
+  5. **Speaking**: el estudiante repite una frase en voz alta; el
      reconocimiento de voz del navegador la transcribe y Claude da un
      consejo breve de pronunciación en español.
-  4. **Writing**: el estudiante traduce una frase; Claude corrige la
+  6. **Writing**: el estudiante traduce una frase; Claude corrige la
      respuesta y explica el error en español sencillo, adaptado a su nivel.
-- **Progreso local**: XP, racha de días y estrellas por unidad, guardado en
-  el navegador (`localStorage`).
+- **Ejercicios variados**: listening, speaking y writing toman cada vez un
+  subconjunto aleatorio del banco de vocabulario/frases de la unidad, para
+  que la práctica no sea siempre exactamente igual.
+- **Progreso guardado automáticamente**: XP, racha de días y estrellas por
+  unidad se guardan en el navegador (`localStorage`) y persisten aunque
+  cierres la aplicación o el navegador. Además, desde el panel "💾
+  Respaldar o restaurar progreso" (en el mapa de unidades, y como opción al
+  iniciar) puedes copiar un código de respaldo y usarlo para restaurar tu
+  progreso en otro navegador o dispositivo.
 - **Funciona sin configurar nada**: si no hay una llave de Claude
   configurada, la app usa una corrección local (comparación de texto) para
   que siempre sea utilizable; al configurar la llave, las correcciones y

@@ -7,6 +7,37 @@ export interface VocabItem {
   es: string;
   exampleEn: string;
   exampleEs: string;
+  /** Nota breve de uso/gramática en español, para frases que lo ameritan. */
+  explanationEs?: string;
+}
+
+export interface SlangItem {
+  id: string;
+  phraseEn: string;
+  meaningEs: string;
+  exampleEn: string;
+  exampleEs: string;
+  /** Cuándo/con quién es apropiado usarlo (registro). */
+  registerEs: string;
+}
+
+export interface DialogueLine {
+  speaker: "A" | "B";
+  en: string;
+  es: string;
+}
+
+export interface DialogueCheck {
+  questionEs: string;
+  options: string[];
+  correctIndex: number;
+}
+
+export interface Dialogue {
+  titleEs: string;
+  contextEs: string;
+  lines: DialogueLine[];
+  check: DialogueCheck;
 }
 
 export interface WritingPrompt {
@@ -23,10 +54,19 @@ export interface Unit {
   description: string;
   color: string;
   vocab: VocabItem[];
+  slang: SlangItem[];
+  dialogue: Dialogue;
   writingPrompts: WritingPrompt[];
 }
 
-export type ActivityKind = "presentation" | "listening" | "speaking" | "writing" | "results";
+export type ActivityKind =
+  | "presentation"
+  | "slang"
+  | "dialogue"
+  | "listening"
+  | "speaking"
+  | "writing"
+  | "results";
 
 export interface UnitProgress {
   unitId: string;

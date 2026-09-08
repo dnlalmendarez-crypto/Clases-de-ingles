@@ -3,6 +3,7 @@ import type { UserLevel } from "../types";
 
 interface Props {
   onFinish: (level: UserLevel, name: string) => void;
+  onImportProgress: (code: string) => boolean;
 }
 
 const LEVEL_OPTIONS: { level: UserLevel; title: string; desc: string; emoji: string }[] = [
@@ -26,21 +27,30 @@ const LEVEL_OPTIONS: { level: UserLevel; title: string; desc: string; emoji: str
   },
 ];
 
-export default function Onboarding({ onFinish }: Props) {
+export default function Onboarding({ onFinish, onImportProgress }: Props) {
   const [step, setStep] = useState<0 | 1>(0);
   const [name, setName] = useState("");
   const [level, setLevel] = useState<UserLevel | null>(null);
+  const [showRestore, setShowRestore] = useState(false);
+  const [restoreCode, setRestoreCode] = useState("");
+  const [restoreError, setRestoreError] = useState(false);
+
+  const restore = () => {
+    if (!restoreCode.trim()) return;
+    const ok = onImportProgress(restoreCode.trim());
+    setRestoreError(!ok);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-10">
-      <div className="w-full max-w-lg bg-white rounded-3xl shadow-xl p-8 animate-pop">
+      <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl p-8 animate-pop">
         <div className="text-center mb-6">
-          <div className="text-6xl mb-2">🎓</div>
-          <h1 className="text-2xl font-extrabold text-brand-800">Clases de Inglés</h1>
+          <div className="text-5xl mb-2">🎓</div>
+          <h1 className="text-2xl font-bold text-brand-800">Clases de Inglés</h1>
           <p className="text-brand-600 mt-1">Aprende inglés paso a paso, desde cero</p>
         </div>
 
-        {step === 0 && (
+        {step === 0 && !showRestore && (
           <div className="space-y-5">
             <label className="block">
               <span className="text-sm font-semibold text-gray-700">¿Cómo te llamas?</span>
@@ -58,6 +68,48 @@ export default function Onboarding({ onFinish }: Props) {
               className="w-full rounded-2xl bg-brand-500 text-white font-bold py-3 text-lg shadow-md disabled:opacity-40 disabled:cursor-not-allowed hover:bg-brand-600 transition"
             >
               Continuar
+            </button>
+            <button
+              onClick={() => setShowRestore(true)}
+              className="block mx-auto text-sm text-gray-400 underline hover:text-gray-600"
+            >
+              ¿Ya tienes progreso guardado? Restaurar con un código
+            </button>
+          </div>
+        )}
+
+        {step === 0 && showRestore && (
+          <div className="space-y-4">
+            <p className="text-sm text-gray-600">
+              Pega el código de respaldo que copiaste antes desde otro navegador o dispositivo.
+            </p>
+            <textarea
+              value={restoreCode}
+              onChange={(e) => {
+                setRestoreCode(e.target.value);
+                setRestoreError(false);
+              }}
+              rows={3}
+              placeholder="Pega aquí tu código de respaldo..."
+              className="w-full rounded-xl border-2 border-brand-100 px-3 py-2 text-xs font-mono focus:border-brand-400 focus:outline-none"
+            />
+            {restoreError && (
+              <p className="text-sm text-red-500">
+                Ese código no es válido. Revisa que lo hayas copiado completo.
+              </p>
+            )}
+            <button
+              onClick={restore}
+              disabled={!restoreCode.trim()}
+              className="w-full rounded-2xl bg-brand-500 text-white font-bold py-3 text-lg shadow-md disabled:opacity-40 disabled:cursor-not-allowed hover:bg-brand-600 transition"
+            >
+              Restaurar progreso
+            </button>
+            <button
+              onClick={() => setShowRestore(false)}
+              className="block mx-auto text-sm text-gray-400 underline hover:text-gray-600"
+            >
+              Volver
             </button>
           </div>
         )}

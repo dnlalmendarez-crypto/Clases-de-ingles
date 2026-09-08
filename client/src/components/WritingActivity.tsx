@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { Unit, UserLevel } from "../types";
 import { correctWriting } from "../lib/api";
 import type { CorrectionResult } from "../lib/api";
@@ -11,8 +11,21 @@ interface Props {
   onDone: (score: number) => void;
 }
 
+function shuffle<T>(arr: T[]): T[] {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
 export default function WritingActivity({ unit, level, onExit, onDone }: Props) {
-  const prompts = unit.writingPrompts;
+  const prompts = useMemo(() => {
+    const roundSize = Math.min(3, unit.writingPrompts.length);
+    return shuffle(unit.writingPrompts).slice(0, roundSize);
+    // Subconjunto aleatorio en cada intento, para variar los ejercicios.
+  }, [unit]);
   const [index, setIndex] = useState(0);
   const [answer, setAnswer] = useState("");
   const [checking, setChecking] = useState(false);
@@ -56,7 +69,7 @@ export default function WritingActivity({ unit, level, onExit, onDone }: Props) 
       />
 
       <div className="max-w-xl mx-auto px-4">
-        <div className="bg-white rounded-3xl shadow-xl p-8">
+        <div className="bg-white rounded-2xl shadow-xl p-8">
           <p className="text-gray-500 mb-1">Traduce al inglés:</p>
           <p className="text-xl font-bold text-gray-800 mb-4">{prompt.promptEs}</p>
           {prompt.hintEs && <p className="text-sm text-brand-500 mb-3">💡 {prompt.hintEs}</p>}

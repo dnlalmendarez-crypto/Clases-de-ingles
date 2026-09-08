@@ -19,9 +19,9 @@ export default function ResultsScreen({ unit, score, onBackToDashboard }: Props)
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-xl p-8 text-center animate-pop">
-        <div className="text-7xl mb-3">{stars >= 2 ? "🏆" : "🎉"}</div>
-        <h2 className="text-2xl font-extrabold text-brand-800">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 text-center animate-pop">
+        <div className="text-5xl mb-3">{stars >= 2 ? "🏆" : "🎉"}</div>
+        <h2 className="text-2xl font-bold text-brand-800">
           {unit.emoji} {unit.title} completado
         </h2>
         <p className="text-gray-500 mt-2">{message}</p>

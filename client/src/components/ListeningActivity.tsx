@@ -25,10 +25,14 @@ interface Question {
 
 export default function ListeningActivity({ unit, onExit, onDone }: Props) {
   const questions = useMemo<Question[]>(() => {
-    return shuffle(unit.vocab).map((item) => {
+    const roundSize = Math.min(6, unit.vocab.length);
+    const picked = shuffle(unit.vocab).slice(0, roundSize);
+    return picked.map((item) => {
       const distractors = shuffle(unit.vocab.filter((v) => v.id !== item.id)).slice(0, 3);
       return { item, options: shuffle([item, ...distractors]) };
     });
+    // Se vuelve a elegir un subconjunto aleatorio cada vez que se entra a la unidad,
+    // para que la práctica no sea siempre exactamente igual.
   }, [unit]);
 
   const [index, setIndex] = useState(0);
@@ -67,7 +71,7 @@ export default function ListeningActivity({ unit, onExit, onDone }: Props) {
       />
 
       <div className="max-w-xl mx-auto px-4">
-        <div className="bg-white rounded-3xl shadow-xl p-8 text-center">
+        <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
           <p className="text-gray-500 mb-4">Escucha la palabra y elige la traducción correcta</p>
           <button
             onClick={playAudio}

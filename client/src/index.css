@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -11,5 +11,5 @@ body,
 }
 
 body {
-  background: linear-gradient(180deg, #f4fbf6 0%, #eaf6ee 100%);
+  background: linear-gradient(180deg, #f7f6f4 0%, #eef1f3 100%);
 }
